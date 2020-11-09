@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  rabbit-container:
+    container_name: rabbit-container
+    image: "rabbitmq:3-management"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - 15672:15672
+      - 5672:5672
+
+  microservice-a:
+    container_name: microservice-a
+    build:
+      context: ./a
+    depends_on:
+      - rabbit-container
+    ports:
+      - 9090:9090
+    restart: on-failure
+
+  microservice-b:
+    container_name: microservice-b
+    build:
+      context: ./b
+    depends_on:
+      - rabbit-container
+    ports:
+      - 9091:9091
+    restart: on-failure
+
+  microservice-c:
+    container_name: microservice-c
+    build:
+      context: ./c
+    depends_on:
+      - rabbit-container
+    ports:
+      - 9092:9092
+    restart: on-failure
